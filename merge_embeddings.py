@@ -12,22 +12,19 @@ def parse_fasta(fasta):
         yield(seq_id, seq_data)
 
 if __name__ == '__main__':
-    fasta_file = './dataset/train_sequences.fasta'
+    fasta_file = './dataset/testsuperset.fasta'
     parser = parse_fasta(fasta_file)
 
-    train_embeddings = None
-    with open('./dataset/filtered_train.fasta', 'w') as fasta_f:
+    embeddings = None
+    with open('./dataset/filtered_test.fasta', 'w') as fasta_f:
         for seq_id, seq_data in parser:
-            if not os.path.exists(f'./embeddings/{seq_id}.pt'):
+            if not os.path.exists(f'./test_embeddings/{seq_id}.pt'):
                 print(seq_id)
                 break
-            pt_file = f'./embeddings/{seq_id}.pt'
+            pt_file = f'./test_embeddings/{seq_id}.pt'
             loaded_tensor = torch.load(pt_file)
-            train_embeddings = loaded_tensor['mean_representations'][33].cpu().numpy() if train_embeddings is None else np.concatenate((train_embeddings, loaded_tensor['mean_representations'][33].cpu().numpy()))
-            print(train_embeddings.shape)
+            embeddings = loaded_tensor['mean_representations'][36].cpu().numpy() if embeddings is None else np.concatenate((embeddings, loaded_tensor['mean_representations'][36].cpu().numpy()))
+            print(embeddings.shape)
             
-    train_embeddings.reshape((-1, 2560))
-    np.save('./train_embeddings.npy', train_embeddings)
-
-            
-
+    embeddings = embeddings.reshape((-1, 2560))
+    np.save('./test_embeddings.npy', embeddings)
